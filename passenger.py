@@ -44,18 +44,17 @@ stand = [
     
     (14, 2)]
 
-c = 0
+
 #starting board is (8, 4)
 #max distance is 10
 def rawfunc(passengers = passen, res = res):
     # passengers is the # on people to be boarded
     # prio is the # of priority passengers in the list of passengers
     for r in passengers:
-
         if r[0] == 'p':
             max_dist = [0, [0,0]]
             min_dist = [99999, [0,0]]
-            for i in prio_seats:
+            for i in list(prio_seats):
                 for e in ent:
                     x = get_seat(e, i)
                     if max_dist[0] < x:
@@ -65,20 +64,22 @@ def rawfunc(passengers = passen, res = res):
                         min_dist[0] = x
                         min_dist[1] = i
             if r[1] <= 5:
-                res[min_dist[1][0]][min_dist[1][1]] = r
-                x = prio_seats.index((min_dist[1][0],min_dist[1][1]))
-                prio_seats.pop(x)
+                seat = (min_dist[1][0], min_dist[1][1])
+                res[seat[0]][seat[1]] = r
+                if seat in prio_seats:
+                    prio_seats.remove(seat)
             else:
-                res[max_dist[1][0]][max_dist[1][1]] = r
-                x = prio_seats.index((max_dist[1][0],max_dist[1][1]))
-                prio_seats.pop(x)
+                seat = (max_dist[1][0], max_dist[1][1])
+                res[seat[0]][seat[1]] = r
+                if seat in prio_seats:
+                    prio_seats.remove(seat)
             #print(res, prio_seats)
         else:
             max_dist = [0, [0,0]]
             min_dist = [99999, [0,0]]
             #print('pass')
             if seats:
-                for i in seats:
+                for i in list(seats):
                     for e in ent:
                         x = get_seat(e, i)
                         if max_dist[0] < x:
@@ -88,16 +89,18 @@ def rawfunc(passengers = passen, res = res):
                             min_dist[0] = x
                             min_dist[1] = i
                 if r[1] <= 5:
-                    res[min_dist[1][0]][min_dist[1][1]] = r
-                    x = seats.index((min_dist[1][0],min_dist[1][1]))
-                    seats.pop(x)
+                    seat = (min_dist[1][0], min_dist[1][1])
+                    res[seat[0]][seat[1]] = r
+                    if seat in seats:
+                        seats.remove(seat)
                 else:
-                    res[max_dist[1][0]][max_dist[1][1]] = r
-                    x = seats.index((max_dist[1][0],max_dist[1][1]))
-                    seats.pop(x)
+                    seat = (max_dist[1][0], max_dist[1][1])
+                    res[seat[0]][seat[1]] = r
+                    if seat in seats:
+                        seats.remove(seat)
                 #print(res)
             else: 
-                for i in stand:
+                for i in list(stand):
                     for e in ent:
                         x = get_seat(e, i)
                         if max_dist[0] < x:
@@ -107,26 +110,36 @@ def rawfunc(passengers = passen, res = res):
                             min_dist[0] = x
                             min_dist[1] = i
                 if r[1] <= 5:
-                    res[min_dist[1][0]][min_dist[1][1]] = r
-                    x = stand.index((min_dist[1][0],min_dist[1][1]))
-                    stand.pop(x)
+                    seat = (min_dist[1][0], min_dist[1][1])
+                    res[seat[0]][seat[1]] = r
+                    if seat in stand:
+                        stand.remove(seat)
                 else:
-                    res[max_dist[1][0]][max_dist[1][1]] = r
-                    x = stand.index((max_dist[1][0],max_dist[1][1]))
-                    stand.pop(x)
-    print('passengers')
+                    seat = (max_dist[1][0], max_dist[1][1])
+                    res[seat[0]][seat[1]] = r
+                    if seat in stand:
+                        stand.remove(seat)
+    print(res)
 
 
 def simulate_algo(passengers = passen):
-    import grid_sim as g
+    import sys
+
+    g = sys.modules.get("__main__")
+    if g is None or not hasattr(g, "build_window"):
+        import grid_sim as g
+
+    if g.center is None:
+        g.build_window()
     # working with a 15 x 9 matrix grid
     # r x c
     # entracnes are (8,4), (9, 4), (0,4), (1,4)
+    c = 0
     for r in passengers:
         if r[0] == 'p':
             max_dist = [0, [0,0]]
             min_dist = [99999, [0,0]]
-            for i in prio_seats:
+            for i in list(prio_seats):
                 for e in ent:
                     x = get_seat(e, i)
                     if max_dist[0] < x:
@@ -136,22 +149,24 @@ def simulate_algo(passengers = passen):
                         min_dist[0] = x
                         min_dist[1] = i
             if r[1] <= 5:
-                x = prio_seats.index((min_dist[1][0],min_dist[1][1]))
-                prio_seats.pop(x)
-                g.create_passenger(ent[c], (min_dist[1][0],min_dist[1][1]))
+                seat = (min_dist[1][0], min_dist[1][1])
+                if seat in prio_seats:
+                    prio_seats.remove(seat)
+                g.center.after(1000, g.create_passenger, ent[c], seat, r)
             else:
-                x = prio_seats.index((max_dist[1][0],max_dist[1][1]))
-                prio_seats.pop(x)
-                g.create_passenger(ent[c], (max_dist[1][0],max_dist[1][1]))
+                seat = (max_dist[1][0], max_dist[1][1])
+                if seat in prio_seats:
+                    prio_seats.remove(seat)
+                g.center.after(1000, g.create_passenger, ent[c], seat, r)
             if c < 3: c+=1 
-            else: c-=1
+            else: c=0
             #print(res, prio_seats)
         else:
             max_dist = [0, [0,0]]
             min_dist = [99999, [0,0]]
             #print('pass')
             if seats:
-                for i in seats:
+                for i in list(seats):
                     for e in ent:
                         x = get_seat(e, i)
                         if max_dist[0] < x:
@@ -161,18 +176,20 @@ def simulate_algo(passengers = passen):
                             min_dist[0] = x
                             min_dist[1] = i
                 if r[1] <= 5:
-                    x = seats.index((min_dist[1][0],min_dist[1][1]))
-                    seats.pop(x)
-                    g.create_passenger(ent[c], (min_dist[1][0],min_dist[1][1]))
+                    seat = (min_dist[1][0], min_dist[1][1])
+                    if seat in seats:
+                        seats.remove(seat)
+                    g.center.after(1000, g.create_passenger, ent[c], seat, r)
                 else:
-                    x = seats.index((max_dist[1][0],max_dist[1][1]))
-                    seats.pop(x)
-                    g.create_passenger(ent[c], (max_dist[1][0],max_dist[1][1]))
+                    seat = (max_dist[1][0], max_dist[1][1])
+                    if seat in seats:
+                        seats.remove(seat)
+                    g.center.after(1000, g.create_passenger, ent[c], seat, r)
                 if c < 3: c+=1 
-                else: c-=1
+                else: c=0
                 #print(res)
             else: 
-                for i in stand:
+                for i in list(stand):
                     for e in ent:
                         x = get_seat(e, i)
                         if max_dist[0] < x:
@@ -182,17 +199,17 @@ def simulate_algo(passengers = passen):
                             min_dist[0] = x
                             min_dist[1] = i
                 if r[1] <= 5:
-                    res[min_dist[1][0]][min_dist[1][1]] = r
-                    x = stand.index((min_dist[1][0],min_dist[1][1]))
-                    stand.pop(x)
-                    g.create_passenger(ent[c], (min_dist[1][0],min_dist[1][1]))
+                    seat = (min_dist[1][0], min_dist[1][1])
+                    if seat in stand:
+                        stand.remove(seat)
+                    g.center.after(1000, g.create_passenger, ent[c], seat, r)
                 else:
-                    res[max_dist[1][0]][max_dist[1][1]] = r
-                    x = stand.index((max_dist[1][0],max_dist[1][1]))
-                    stand.pop(x)
-                    g.create_passenger(ent[c], (max_dist[1][0],max_dist[1][1]))
+                    seat = (max_dist[1][0], max_dist[1][1])
+                    if seat in stand:
+                        stand.remove(seat)
+                    g.center.after(1000, g.create_passenger, ent[c], seat, r)
                 if c < 3: c+=1 
-                else: c-=1
+                else: c=0
     #print(res)
                 
 
@@ -203,3 +220,5 @@ def get_seat(pos, seatpos):
 #Manhattan distance
 def get_dist(x1, x2, y1, y2):
     return abs(x1 - x2) + abs(y1 - y2)
+
+#rawfunc()
