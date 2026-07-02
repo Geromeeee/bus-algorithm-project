@@ -129,6 +129,7 @@ def simulate_algo(passengers = passen):
     # r x c
     # entracnes are (8,4), (9, 4), (0,4), (1,4)
     c = 0
+    delay = 1000
     for r in passengers:
         if r[0] == 'p':
             max_dist = [0, [0,0]]
@@ -146,12 +147,12 @@ def simulate_algo(passengers = passen):
                 seat = (min_dist[1][0], min_dist[1][1])
                 if seat in prio_seats:
                     prio_seats.remove(seat)
-                g.center.after(1000, g.create_passenger, ent[c], seat, r)
+                g.center.after(delay, g.create_passenger, ent[c], seat, r)
             else:
                 seat = (max_dist[1][0], max_dist[1][1])
                 if seat in prio_seats:
                     prio_seats.remove(seat)
-                g.center.after(1000, g.create_passenger, ent[c], seat, r)
+                g.center.after(delay, g.create_passenger, ent[c], seat, r)
             if c < 3: c+=1 
             else: c=0
             #print(res, prio_seats)
@@ -173,12 +174,12 @@ def simulate_algo(passengers = passen):
                     seat = (min_dist[1][0], min_dist[1][1])
                     if seat in seats:
                         seats.remove(seat)
-                    g.center.after(1000, g.create_passenger, ent[c], seat, r)
+                    g.center.after(delay, g.create_passenger, ent[c], seat, r)
                 else:
                     seat = (max_dist[1][0], max_dist[1][1])
                     if seat in seats:
                         seats.remove(seat)
-                    g.center.after(1000, g.create_passenger, ent[c], seat, r)
+                    g.center.after(delay, g.create_passenger, ent[c], seat, r)
                 if c < 3: c+=1 
                 else: c=0
                 #print(res)
@@ -196,21 +197,26 @@ def simulate_algo(passengers = passen):
                     seat = (min_dist[1][0], min_dist[1][1])
                     if seat in stand:
                         stand.remove(seat)
-                    g.center.after(1000, g.create_passenger, ent[c], seat, r)
+                    g.center.after(delay, g.create_passenger, ent[c], seat, r)
                 else:
                     seat = (max_dist[1][0], max_dist[1][1])
                     if seat in stand:
                         stand.remove(seat)
-                    g.center.after(1000, g.create_passenger, ent[c], seat, r)
+                    g.center.after(delay, g.create_passenger, ent[c], seat, r)
                 if c < 3: c+=1 
                 else: c=0
     #print(res)
-                
+        delay += 1000
 
 
 def get_seat(pos, seatpos):
     return get_dist(pos[0], pos[1], seatpos[0], seatpos[1])
 
 #Manhattan distance
-def get_dist(x1, x2, y1, y2):
+def get_dist(x1, y1, x2, y2):
     return abs(x1 - x2) + abs(y1 - y2)
+<<<<<<< Updated upstream
+=======
+
+# rawfunc()
+>>>>>>> Stashed changes

@@ -49,13 +49,17 @@ def start_app():
     center.after(100, p.simulate_algo)
     center.mainloop()
 
-def is_valid_move(current_coords, next_coords):
+
+def is_valid_move(current_coords, next_coords, dest_coords):
     nxt_row, nxt_col = next_coords
-    curr_row, curr_col = current_coords
-    if curr_row == nxt_row:
-        return cell_types.get(next_coords)
-    if nxt_row == 14:
-        return cell_types.get(next_coords)
+    dest_row, dest_col = dest_coords
+
+    if next_coords == dest_coords: #if next step is the same as the destination
+        return True
+
+    if nxt_row == dest_row or nxt_row == 14:     #if next step is now on destination row or in back row, allow horizontal movement to seats or back row respectively
+        return cell_types.get(next_coords) in ['yellow', 'purple', 'blue', 'green']
+
     return cell_types.get(next_coords) == 'green'
 
 def move_to_next_cell(ids, curr, dest, final):
@@ -76,29 +80,27 @@ def circle_move_to_cell(d, curr, dest):
     dest_row, dest_col = dest
     next_step = None
 
-    if curr_row == 0 or curr_row == dest_row:
+    if curr == dest: #if arrived, then sit
+        return
+
+    if curr_row == dest_row:    #if now on the correct row, move horizontally
         step_dir = 1 if dest_col > curr_col else -1
         next_step = (curr_row, curr_col + step_dir)
     else:
-
-        step_dir = 1 if dest_row > curr_row else -1
+        step_dir = 1 if dest_row > curr_row else -1         #or else vertically
         test_step = (curr_row + step_dir, curr_col)
-        
-     
-        if is_valid_move(curr, test_step):
+
+        if is_valid_move(curr, test_step, dest):
             next_step = test_step
         else:
-            
             for col_offset in [-1, 1]:
                 alt_step = (curr_row, curr_col + col_offset)
-                if is_valid_move(curr, alt_step):
+                if is_valid_move(curr, alt_step, dest):
                     next_step = alt_step
                     break
 
-
     if next_step and next_step in cells:
         move_to_next_cell(d, curr, next_step, dest)
-
 
 def create_passenger(curr, dest, length):
     #print(curr, dest)
