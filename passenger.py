@@ -54,7 +54,7 @@ def rawfunc(passengers = passen, res = res):
         if r[0] == 'p':
             max_dist = [0, [0,0]]
             min_dist = [99999, [0,0]]
-            for i in list(prio_seats):
+            for i in prio_seats:
                 for e in ent:
                     x = get_seat(e, i)
                     if max_dist[0] < x:
@@ -64,22 +64,20 @@ def rawfunc(passengers = passen, res = res):
                         min_dist[0] = x
                         min_dist[1] = i
             if r[1] <= 5:
-                seat = (min_dist[1][0], min_dist[1][1])
-                res[seat[0]][seat[1]] = r
-                if seat in prio_seats:
-                    prio_seats.remove(seat)
+                res[min_dist[1][0]][min_dist[1][1]] = r
+                x = prio_seats.index((min_dist[1][0],min_dist[1][1]))
+                prio_seats.pop(x)
             else:
-                seat = (max_dist[1][0], max_dist[1][1])
-                res[seat[0]][seat[1]] = r
-                if seat in prio_seats:
-                    prio_seats.remove(seat)
+                res[max_dist[1][0]][max_dist[1][1]] = r
+                x = prio_seats.index((max_dist[1][0],max_dist[1][1]))
+                prio_seats.pop(x)
             #print(res, prio_seats)
         else:
             max_dist = [0, [0,0]]
             min_dist = [99999, [0,0]]
             #print('pass')
             if seats:
-                for i in list(seats):
+                for i in seats:
                     for e in ent:
                         x = get_seat(e, i)
                         if max_dist[0] < x:
@@ -89,18 +87,16 @@ def rawfunc(passengers = passen, res = res):
                             min_dist[0] = x
                             min_dist[1] = i
                 if r[1] <= 5:
-                    seat = (min_dist[1][0], min_dist[1][1])
-                    res[seat[0]][seat[1]] = r
-                    if seat in seats:
-                        seats.remove(seat)
+                    res[min_dist[1][0]][min_dist[1][1]] = r
+                    x = seats.index((min_dist[1][0],min_dist[1][1]))
+                    seats.pop(x)
                 else:
-                    seat = (max_dist[1][0], max_dist[1][1])
-                    res[seat[0]][seat[1]] = r
-                    if seat in seats:
-                        seats.remove(seat)
+                    res[max_dist[1][0]][max_dist[1][1]] = r
+                    x = seats.index((max_dist[1][0],max_dist[1][1]))
+                    seats.pop(x)
                 #print(res)
             else: 
-                for i in list(stand):
+                for i in stand:
                     for e in ent:
                         x = get_seat(e, i)
                         if max_dist[0] < x:
@@ -110,15 +106,13 @@ def rawfunc(passengers = passen, res = res):
                             min_dist[0] = x
                             min_dist[1] = i
                 if r[1] <= 5:
-                    seat = (min_dist[1][0], min_dist[1][1])
-                    res[seat[0]][seat[1]] = r
-                    if seat in stand:
-                        stand.remove(seat)
+                    res[min_dist[1][0]][min_dist[1][1]] = r
+                    x = stand.index((min_dist[1][0],min_dist[1][1]))
+                    stand.pop(x)
                 else:
-                    seat = (max_dist[1][0], max_dist[1][1])
-                    res[seat[0]][seat[1]] = r
-                    if seat in stand:
-                        stand.remove(seat)
+                    res[max_dist[1][0]][max_dist[1][1]] = r
+                    x = stand.index((max_dist[1][0],max_dist[1][1]))
+                    stand.pop(x)
     print(res)
 
 
@@ -221,4 +215,4 @@ def get_seat(pos, seatpos):
 def get_dist(x1, x2, y1, y2):
     return abs(x1 - x2) + abs(y1 - y2)
 
-#rawfunc()
+rawfunc()
