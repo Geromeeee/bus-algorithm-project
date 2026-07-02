@@ -40,79 +40,98 @@ stand = [
     (10, 2), (10, 3),
     (11, 2), (11, 3),
     (12, 2), (12, 3),
-    (13, 2), (13, 3),
-    
-    (14, 2)]
+    (13, 2), (13, 3)]
 
-
+computed_pseats = [] # computed Priority seats
+computed_seats = [] # computed Regular seats
+computed_stand = [] # conputed Standing seats
 #starting board is (8, 4)
 #max distance is 10
 def rawfunc(passengers = passen, res = res):
     # passengers is the # on people to be boarded
     # prio is the # of priority passengers in the list of passengers
+    comp_seats_dist()
     for r in passengers:
+        dist = None
+        
         if r[0] == 'p':
-            max_dist = [0, [0,0]]
-            min_dist = [99999, [0,0]]
-            for i in prio_seats:
-                for e in ent:
-                    x = get_seat(e, i)
-                    if max_dist[0] < x:
-                        max_dist[0] = x
-                        max_dist[1] = i
-                    elif min_dist[0] > x:
-                        min_dist[0] = x
-                        min_dist[1] = i
-            if r[1] <= 5:
-                res[min_dist[1][0]][min_dist[1][1]] = r
-                x = prio_seats.index((min_dist[1][0],min_dist[1][1]))
-                prio_seats.pop(x)
-            else:
-                res[max_dist[1][0]][max_dist[1][1]] = r
-                x = prio_seats.index((max_dist[1][0],max_dist[1][1]))
-                prio_seats.pop(x)
+            if computed_pseats:
+                for i in range(0, len(computed_pseats), 2):
+                    if r[1] > 5:
+                        if dist is None:
+                            dist = [computed_pseats[i][0], computed_pseats[i][1]]
+                        elif computed_pseats[i][0] > dist[0]:
+                            dist = [computed_pseats[i][0], computed_pseats[i][1]]
+                    else:
+                        if dist is None:
+                            dist = [computed_pseats[i+1][0], computed_pseats[i+1][1]]
+                        elif computed_pseats[i+1][0] < dist[0]:
+                            dist = [computed_pseats[i+1][0], computed_pseats[i+1][1]]
+                    
+                res[dist[1][0]][dist[1][1]] = r
+                #print(r, '( ',dist, ')')
+                x = computed_pseats.index(dist)
+                if r[1] <= 5:
+                    computed_pseats.pop(x)
+                    computed_pseats.pop(x-1)
+                    #print('popping', x, x-1)
+                else:
+                    computed_pseats.pop(x+1)
+                    computed_pseats.pop(x)
+                    #print('popping', x, x+1)
+                #print('computed_pseats:', computed_pseats)
             #print(res, prio_seats)
         else:
-            max_dist = [0, [0,0]]
-            min_dist = [99999, [0,0]]
             #print('pass')
-            if seats:
-                for i in seats:
-                    for e in ent:
-                        x = get_seat(e, i)
-                        if max_dist[0] < x:
-                            max_dist[0] = x
-                            max_dist[1] = i
-                        elif min_dist[0] > x:
-                            min_dist[0] = x
-                            min_dist[1] = i
+            dist = None
+            if computed_seats:
+                for i in range(0, len(computed_seats), 2):
+                    if r[1] > 5:
+                        if dist is None:
+                            dist = [computed_seats[i][0], computed_seats[i][1]]
+                        elif computed_seats[i][0] > dist[0]:
+                            dist = [computed_seats[i][0], computed_seats[i][1]]
+                    else:
+                        if dist is None:
+                            dist = [computed_seats[i+1][0], computed_seats[i+1][1]]
+                        elif computed_seats[i+1][0] < dist[0]:
+                            dist = [computed_seats[i+1][0], computed_seats[i+1][1]]
+                        
+                res[dist[1][0]][dist[1][1]] = r
+
+                x = computed_seats.index(dist)
+                #print(r, '( ',dist, ')')
                 if r[1] <= 5:
-                    res[min_dist[1][0]][min_dist[1][1]] = r
-                    x = seats.index((min_dist[1][0],min_dist[1][1]))
-                    seats.pop(x)
+                    computed_seats.pop(x)
+                    computed_seats.pop(x-1)
                 else:
-                    res[max_dist[1][0]][max_dist[1][1]] = r
-                    x = seats.index((max_dist[1][0],max_dist[1][1]))
-                    seats.pop(x)
+                    computed_seats.pop(x+1)
+                    computed_seats.pop(x)
+                #print('computed_seats:', computed_seats)
                 #print(res)
             else: 
-                for i in stand:
-                    for e in ent:
-                        x = get_seat(e, i)
-                        if max_dist[0] < x:
-                            max_dist[0] = x
-                            max_dist[1] = i
-                        elif min_dist[0] > x:
-                            min_dist[0] = x
-                            min_dist[1] = i
+               if computed_stand:
+                for i in range(0, len(computed_stand), 2):
+                    if r[1] > 5:
+                        if dist is None:
+                            dist = [computed_stand[i][0], computed_stand[i][1]]
+                        elif computed_stand[i][0] > dist[0]:
+                            dist = [computed_stand[i][0], computed_stand[i][1]] 
+                    else:
+                        if dist is None:
+                            dist = [computed_stand[i+1][0], computed_stand[i+1][1]]
+                        elif computed_stand[i+1][0] < dist[0]:
+                            dist = [computed_stand[i+1][0], computed_stand[i+1][1]]
+                res[dist[1][0]][dist[1][1]] = r
+                x = computed_stand.index(dist)
+                #print(r, '( ',dist, ')')
                 if r[1] <= 5:
-                    res[min_dist[1][0]][min_dist[1][1]] = r
-                    x = stand.index((min_dist[1][0],min_dist[1][1]))
-                    stand.pop(x)
+                    computed_stand.pop(x)
+                    computed_stand.pop(x-1)
                 else:
-                    res[max_dist[1][0]][max_dist[1][1]] = r
-                    x = stand.index((max_dist[1][0],max_dist[1][1]))
-                    stand.pop(x)
+                    computed_stand.pop(x+1)
+                    computed_stand.pop(x)
+                    
     #print(res)
 
 
@@ -215,8 +234,52 @@ def get_seat(pos, seatpos):
 #Manhattan distance
 def get_dist(x1, y1, x2, y2):
     return abs(x1 - x2) + abs(y1 - y2)
-<<<<<<< Updated upstream
-=======
 
-# rawfunc()
->>>>>>> Stashed changes
+def comp_seats_dist():
+    for i in seats:
+        max_dist = [0, [0,0]]
+        min_dist = [99999, [0,0]]
+        for e in ent:
+            x = get_seat(e, i)
+            if max_dist[0] < x:
+                max_dist[0] = x
+                max_dist[1] = i
+            if min_dist[0] > x:
+                min_dist[0] = x
+                min_dist[1] = i
+        computed_seats.append(max_dist)
+        computed_seats.append(min_dist)
+    
+    for i in stand:
+        max_dist = [0, [0,0]]
+        min_dist = [99999, [0,0]]
+        for e in ent:
+            x = get_seat(e, i)
+            if max_dist[0] < x:
+                max_dist[0] = x
+                max_dist[1] = i
+            if min_dist[0] > x:
+                min_dist[0] = x
+                min_dist[1] = i
+        computed_stand.append(max_dist)
+        computed_stand.append(min_dist)
+    for i in prio_seats:
+        max_dist = [0, [0,0]]
+        min_dist = [99999, [0,0]]
+        for e in ent:
+            x = get_seat(e, i)
+            if max_dist[0] < x:
+                max_dist[0] = x
+                max_dist[1] = i
+
+            if min_dist[0] > x:
+                min_dist[0] = x
+                min_dist[1] = i
+        computed_pseats.append(max_dist)
+        computed_pseats.append(min_dist)
+    #print('Computed Seats:', computed_seats)
+    #print('Computed Stand:', computed_stand)
+    #print('Computed Priority Seats:', computed_pseats)
+
+rawfunc()
+print(res)
