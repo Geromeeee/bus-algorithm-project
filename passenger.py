@@ -113,7 +113,7 @@ def rawfunc(passengers = passen, res = res):
                     res[max_dist[1][0]][max_dist[1][1]] = r
                     x = stand.index((max_dist[1][0],max_dist[1][1]))
                     stand.pop(x)
-    print(res)
+    #print(res)
 
 
 def simulate_algo(passengers = passen):
@@ -214,5 +214,3 @@ def get_seat(pos, seatpos):
 #Manhattan distance
 def get_dist(x1, x2, y1, y2):
     return abs(x1 - x2) + abs(y1 - y2)
-
-rawfunc()
