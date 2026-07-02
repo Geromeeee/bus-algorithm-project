@@ -1,5 +1,5 @@
 from tkinter import *
-#import passenger as p
+import passenger as p
 
 center=Tk()
 center.title("15x6 grid")
@@ -32,19 +32,23 @@ for row in range(15):
 
 def is_valid_move(current_coords, next_coords):
     nxt_row, nxt_col = next_coords
+    curr_row, curr_col = current_coords
+    if curr_row == nxt_row:
+        return cell_types.get(next_coords)
     if nxt_row == 14:
         return cell_types.get(next_coords)
     return cell_types.get(next_coords) == 'green'
 
-def move_to_next_cell( curr, dest):
-    cells[curr].delete("all")
-    cells[dest].create_oval(5, 5, 45, 45, fill='white')
-    center.after(1000, circle_move_to_cell, dest)
+def move_to_next_cell(d, curr, dest):
+    cells[curr].delete(d)
+    d = cells[dest].create_oval(5, 5, 45, 45, fill='white')
+    center.after(1000, circle_move_to_cell, d, dest)
 
-def circle_move_to_cell( curr = (8,4), dest = (14, 0)):
+def circle_move_to_cell(d, curr = (8,4), dest = (14, 0)):
     curr_row, curr_col = curr
     dest_row, dest_col = dest
     next_step = None
+
     if curr_row == 0 or curr_row == dest_row:
         step_dir = 1 if dest_col > curr_col else -1
         next_step = (curr_row, curr_col + step_dir)
@@ -66,10 +70,14 @@ def circle_move_to_cell( curr = (8,4), dest = (14, 0)):
 
 
     if next_step and next_step in cells:
-        move_to_next_cell( curr, next_step)
+        move_to_next_cell(d, curr, next_step)
 
-    
-cells[(8,4)].create_oval(5, 5, 45, 45, fill='white')
-center.after(100, circle_move_to_cell)
+
+def create_passenger(curr, dest):
+    d = cells[curr].create_oval(5, 5, 45, 45, fill='white')
+    circle_move_to_cell(d, curr, dest)
+
+
+center.after(100, p.simulate_algo)
 center.mainloop()
 
