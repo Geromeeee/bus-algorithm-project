@@ -1,8 +1,9 @@
 
 import copy
 
-passengers = [3, 5, 6, 4, 9, 9, 5, 9, 8, 5, 4, 1, 8, 5, 6, 6, 8, 10, 10, 9, 4, 5, 5, 7, 8, 2, 
-              10, 8, 10, 4, 4, 1, 6, 1, 7, 2, 2, 6, 7, 6, 3, 5, 7, 9, 9, 9, 8, 10, 9, 4]
+#passengers = [3, 5, 6, 4, 9, 9, 5, 9, 8, 5, 4, 1, 8, 5, 6, 6, 8, 10, 10, 9, 4, 5, 5, 7, 8, 2, 10, 8, 10, 4, 4, 1, 6, 1, 7, 2, 2, 6, 7, 6, 3, 5, 7, 9, 9, 9, 8, 10, 9, 4]
+
+passengers = [4, 2, 2, 10, 2, 5, 2, 10, 7, 7, 3, 7, 2, 3, 8, 4, 7, 6, 4, 5, 5, 6, 5, 9, 2, 3, 2, 2, 3, 8, 3, 9, 7, 1, 2, 7, 8, 9, 10, 1, 7, 6, 6, 1, 6, 2, 4, 9, 2, 8, 2, 1, 8, 2, 7, 2, 1, 1, 6, 3, 7, 3, 2, 1, 1, 3, 1, 3, 7, 5, 2, 1, 4, 4, 10, 6, 3, 4, 7, 6, 8, 6, 6, 9, 7, 5, 2, 7, 6, 4, 5, 9, 5, 7, 8, 10, 8, 2, 3, 10]
 p = [('p', val) for val in passengers[:6]]
 r = [('r', val) for val in passengers[6:]]
 passen = p + r
@@ -184,7 +185,7 @@ def simulate_algo(passengers = passen):
                         
                     g.center.after(delay, g.create_passenger, ent[0], seat, passengers[r])
                     #print(res)
-                else: 
+                elif computed_stand: 
                     dist = comp_dist(passengers[r][1], 'r')
                     x = computed_stand.index(dist)
                     seat = (dist[1][0], dist[1][1])
@@ -196,6 +197,9 @@ def simulate_algo(passengers = passen):
                         computed_stand.pop(x)
                         
                     g.center.after(delay, g.create_passenger, ent[0], seat, passengers[r])
+                else:
+                    print('No more seats or standing room available for passenger', passengers[r])
+                    break
         except IndexError:
             pass
         try:
@@ -224,7 +228,7 @@ def simulate_algo(passengers = passen):
                         computed_seats.pop(x)
                     g.center.after(delay, g.create_passenger, ent[1], seat, passengers[r+1])
                     #print(res)
-                else: 
+                elif computed_stand: 
                     dist = comp_dist(passengers[r+1][1], 'r')
                     x = computed_stand.index(dist)
                     seat = (dist[1][0], dist[1][1])
@@ -235,6 +239,9 @@ def simulate_algo(passengers = passen):
                         computed_stand.pop(x)
                         computed_stand.pop(x)
                     g.center.after(delay, g.create_passenger, ent[1], seat, passengers[r+1])
+                else:
+                    print('No more seats or standing room available for passenger', passengers[r+1])
+                    break
         except IndexError:
             pass
         try:
@@ -263,7 +270,7 @@ def simulate_algo(passengers = passen):
                         computed_seats.pop(x)
                     g.center.after(delay, g.create_passenger, ent2[0], seat, passengers[r+2])
                     #print(res)
-                else: 
+                elif computed_stand: 
                     dist = comp_dist(passengers[r+2][1], 'r')
                     x = computed_stand.index(dist)
                     seat = (dist[1][0], dist[1][1])
@@ -274,6 +281,9 @@ def simulate_algo(passengers = passen):
                         computed_stand.pop(x)
                         computed_stand.pop(x)
                     g.center.after(delay, g.create_passenger, ent2[0], seat, passengers[r+2])
+                else:
+                    print('No more seats or standing room available for passenger', passengers[r+2])
+                    break
         except IndexError:
             pass
         try:
@@ -302,7 +312,7 @@ def simulate_algo(passengers = passen):
                         computed_seats.pop(x)
                     g.center.after(delay, g.create_passenger, ent2[1], seat, passengers[r+3])
                     #print(res)
-                else: 
+                elif computed_stand: 
                     dist = comp_dist(passengers[r+3][1], 'r')
                     x = computed_stand.index(dist)
                     seat = (dist[1][0], dist[1][1])
@@ -313,11 +323,14 @@ def simulate_algo(passengers = passen):
                         computed_stand.pop(x)
                         computed_stand.pop(x)
                     g.center.after(delay, g.create_passenger, ent2[1], seat, passengers[r+3])
+                else:
+                    print('No more seats or standing room available for passenger', passengers[r+3])
+                    break
         except IndexError:
             pass
 
     #print(res)
-        delay += 1000
+        delay += 3000
 
 # Manhattan distance function to get the distance between two points
 def get_seat(pos, seatpos):
@@ -435,7 +448,7 @@ def comp_dist(p_dist, type):
                         dist = [computed_stand[i+1][0], computed_stand[i+1][1]]
                     elif computed_stand[i+1][0] < dist[0]:
                         dist = [computed_stand[i+1][0], computed_stand[i+1][1]]
-    print(dist)      
+    print(p_dist)      
     return dist
 #rawfunc()
 print(res)
