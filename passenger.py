@@ -12,9 +12,13 @@ row = [0] * cols
 res = [copy.deepcopy(row) for _ in range(rows)]
 
 # entrances passengers will come out from
-ent = [(0,4), (1,4), (8, 4), (9,4)]
-prio_seats = [(7, 0), (7,1), (8,0),(8,1), (9, 0), (9, 1)]
-seats = [(2,0), (2, 5), (3,0), (3,5), (4,0), (4,5), (5, 0), (5,5), (6, 0), (6, 5),
+ent = [(0,4), (1,4)]
+ent2 = [(8, 4), (9,4)]
+prio_seats = [(7, 0), (7,1), (8,0),
+              (8,1), (9, 0), (9, 1)]
+seats = [(2,0), (2, 5), (3,0), (3,5), (4,0), (4,5) ]
+seats_2 = [         
+        (5, 0), (5,5), (6, 0), (6, 5),
         (10, 0), (10, 1), (10, 4), (10, 5),
         (11, 0), (11, 1), (11, 4), (11, 5),
         (12, 0), (12, 1), (12, 4), (12, 5),
@@ -28,7 +32,9 @@ stand = [
     
     (2, 2), (2, 3),
     (3, 2), (3, 3),
-    (4, 2), (4, 3),
+    (4, 2), (4, 3)]
+
+stand_2 =[
     (5, 2), (5, 3),
     (6, 2), (6, 3),
     
@@ -242,7 +248,7 @@ def simulate_algo(passengers = passen):
                 else:
                     computed_pseats.pop(x)
                     computed_pseats.pop(x)
-                g.center.after(delay, g.create_passenger, ent[2], seat, passengers[r+2])
+                g.center.after(delay, g.create_passenger, ent2[0], seat, passengers[r+2])
                 #print(res, prio_seats)
             else:
                 if computed_seats:
@@ -255,7 +261,7 @@ def simulate_algo(passengers = passen):
                     else:
                         computed_seats.pop(x)
                         computed_seats.pop(x)
-                    g.center.after(delay, g.create_passenger, ent[2], seat, passengers[r+2])
+                    g.center.after(delay, g.create_passenger, ent2[0], seat, passengers[r+2])
                     #print(res)
                 else: 
                     dist = comp_dist(passengers[r+2][1], 'r')
@@ -267,7 +273,7 @@ def simulate_algo(passengers = passen):
                     else:
                         computed_stand.pop(x)
                         computed_stand.pop(x)
-                    g.center.after(delay, g.create_passenger, ent[2], seat, passengers[r+2])
+                    g.center.after(delay, g.create_passenger, ent2[0], seat, passengers[r+2])
         except IndexError:
             pass
         try:
@@ -281,7 +287,7 @@ def simulate_algo(passengers = passen):
                 else:
                     computed_pseats.pop(x)
                     computed_pseats.pop(x)
-                g.center.after(delay, g.create_passenger, ent[3], seat, passengers[r+3])
+                g.center.after(delay, g.create_passenger, ent2[1], seat, passengers[r+3])
                 #print(res, prio_seats)
             else:
                 if computed_seats:
@@ -294,7 +300,7 @@ def simulate_algo(passengers = passen):
                     else:
                         computed_seats.pop(x)
                         computed_seats.pop(x)
-                    g.center.after(delay, g.create_passenger, ent[3], seat, passengers[r+3])
+                    g.center.after(delay, g.create_passenger, ent2[1], seat, passengers[r+3])
                     #print(res)
                 else: 
                     dist = comp_dist(passengers[r+3][1], 'r')
@@ -306,20 +312,16 @@ def simulate_algo(passengers = passen):
                     else:
                         computed_stand.pop(x)
                         computed_stand.pop(x)
-                    g.center.after(delay, g.create_passenger, ent[3], seat, passengers[r+3])
+                    g.center.after(delay, g.create_passenger, ent2[1], seat, passengers[r+3])
         except IndexError:
             pass
 
     #print(res)
         delay += 1000
 
-
+# Manhattan distance function to get the distance between two points
 def get_seat(pos, seatpos):
-    return get_dist(pos[0], pos[1], seatpos[0], seatpos[1])
-
-#Manhattan distance
-def get_dist(x1, y1, x2, y2):
-    return abs(x1 - x2) + abs(y1 - y2)
+    return abs(pos[0] - seatpos[0]) + abs(pos[1] - seatpos[1])
 
 def comp_seats_dist():
     for i in seats:
@@ -335,7 +337,19 @@ def comp_seats_dist():
                 min_dist[1] = i
         computed_seats.append(max_dist)
         computed_seats.append(min_dist)
-    
+    for i in seats_2:
+        max_dist = [0, [0,0]]
+        min_dist = [99999, [0,0]]
+        for e in ent2:
+            x = get_seat(e, i)
+            if max_dist[0] < x:
+                max_dist[0] = x
+                max_dist[1] = i
+            if min_dist[0] > x:
+                min_dist[0] = x
+                min_dist[1] = i
+        computed_seats.append(max_dist)
+        computed_seats.append(min_dist)
     for i in stand:
         max_dist = [0, [0,0]]
         min_dist = [99999, [0,0]]
@@ -349,10 +363,23 @@ def comp_seats_dist():
                 min_dist[1] = i
         computed_stand.append(max_dist)
         computed_stand.append(min_dist)
+    for i in stand_2:
+        max_dist = [0, [0,0]]
+        min_dist = [99999, [0,0]]
+        for e in ent2:
+            x = get_seat(e, i)
+            if max_dist[0] < x:
+                max_dist[0] = x
+                max_dist[1] = i
+            if min_dist[0] > x:
+                min_dist[0] = x
+                min_dist[1] = i
+        computed_stand.append(max_dist)
+        computed_stand.append(min_dist)
     for i in prio_seats:
         max_dist = [0, [0,0]]
         min_dist = [99999, [0,0]]
-        for e in ent:
+        for e in ent2:
             x = get_seat(e, i)
             if max_dist[0] < x:
                 max_dist[0] = x
@@ -372,7 +399,6 @@ def comp_dist(p_dist, type):
         if computed_pseats:
             dist = None
             for i in range(0, len(computed_pseats), 2):
-
                 if p_dist > 5:
                     if dist is None:
                         dist = [computed_pseats[i][0], computed_pseats[i][1]]
