@@ -147,83 +147,169 @@ def simulate_algo(passengers = passen):
     # working with a 15 x 9 matrix grid
     # r x c
     # entracnes are (8,4), (9, 4), (0,4), (1,4)
-    c = 0
     delay = 1000
-    for r in passengers:
-        if r[0] == 'p':
-            max_dist = [0, [0,0]]
-            min_dist = [99999, [0,0]]
-            for i in list(prio_seats):
-                for e in ent:
-                    x = get_seat(e, i)
-                    if max_dist[0] < x:
-                        max_dist[0] = x
-                        max_dist[1] = i
-                    elif min_dist[0] > x:
-                        min_dist[0] = x
-                        min_dist[1] = i
-            if r[1] <= 5:
-                seat = (min_dist[1][0], min_dist[1][1])
-                if seat in prio_seats:
-                    prio_seats.remove(seat)
-                g.center.after(delay, g.create_passenger, ent[c], seat, r)
+    comp_seats_dist()
+    for r in range(0, len(passengers), 4):
+        try:
+            if passengers[r][0] == 'p':
+                dist = comp_dist(passengers[r][1], 'p')
+                x = computed_pseats.index(dist)
+                seat = (dist[1][0], dist[1][1])
+                if passengers[r][1] <= 5:
+                    computed_pseats.pop(x)
+                    computed_pseats.pop(x-1) 
+                else:
+                    computed_pseats.pop(x)
+                    computed_pseats.pop(x)
+                    
+                g.center.after(delay, g.create_passenger, ent[0], seat, passengers[r])
+                #print(res, prio_seats)
             else:
-                seat = (max_dist[1][0], max_dist[1][1])
-                if seat in prio_seats:
-                    prio_seats.remove(seat)
-                g.center.after(delay, g.create_passenger, ent[c], seat, r)
-            if c < 3: c+=1 
-            else: c=0
-            #print(res, prio_seats)
-        else:
-            max_dist = [0, [0,0]]
-            min_dist = [99999, [0,0]]
-            #print('pass')
-            if seats:
-                for i in list(seats):
-                    for e in ent:
-                        x = get_seat(e, i)
-                        if max_dist[0] < x:
-                            max_dist[0] = x
-                            max_dist[1] = i
-                        elif min_dist[0] > x:
-                            min_dist[0] = x
-                            min_dist[1] = i
-                if r[1] <= 5:
-                    seat = (min_dist[1][0], min_dist[1][1])
-                    if seat in seats:
-                        seats.remove(seat)
-                    g.center.after(delay, g.create_passenger, ent[c], seat, r)
+                if computed_seats:
+                    dist = comp_dist(passengers[r][1], 'r')
+                    x = computed_seats.index(dist)
+                    seat = (dist[1][0], dist[1][1])
+                    if passengers[r][1] <= 5:
+                        computed_seats.pop(x)
+                        computed_seats.pop(x-1)
+                    else:
+                        computed_seats.pop(x)
+                        computed_seats.pop(x)
+                        
+                    g.center.after(delay, g.create_passenger, ent[0], seat, passengers[r])
+                    #print(res)
+                else: 
+                    dist = comp_dist(passengers[r][1], 'r')
+                    x = computed_stand.index(dist)
+                    seat = (dist[1][0], dist[1][1])
+                    if passengers[r][1] <= 5:
+                        computed_stand.pop(x)
+                        computed_stand.pop(x-1)
+                    else:
+                        computed_stand.pop(x)
+                        computed_stand.pop(x)
+                        
+                    g.center.after(delay, g.create_passenger, ent[0], seat, passengers[r])
+        except IndexError:
+            pass
+        try:
+            if passengers[r+1][0] == 'p':
+                dist = comp_dist(passengers[r+1][1], 'p')
+                x = computed_pseats.index(dist)
+                seat = (dist[1][0], dist[1][1])
+                if passengers[r+1][1] <= 5:
+                    computed_pseats.pop(x)
+                    computed_pseats.pop(x-1) 
                 else:
-                    seat = (max_dist[1][0], max_dist[1][1])
-                    if seat in seats:
-                        seats.remove(seat)
-                    g.center.after(delay, g.create_passenger, ent[c], seat, r)
-                if c < 3: c+=1 
-                else: c=0
-                #print(res)
-            else: 
-                for i in list(stand):
-                    for e in ent:
-                        x = get_seat(e, i)
-                        if max_dist[0] < x:
-                            max_dist[0] = x
-                            max_dist[1] = i
-                        elif min_dist[0] > x:
-                            min_dist[0] = x
-                            min_dist[1] = i
-                if r[1] <= 5:
-                    seat = (min_dist[1][0], min_dist[1][1])
-                    if seat in stand:
-                        stand.remove(seat)
-                    g.center.after(delay, g.create_passenger, ent[c], seat, r)
+                    computed_pseats.pop(x)
+                    computed_pseats.pop(x)
+                g.center.after(delay, g.create_passenger, ent[1], seat, passengers[r+1])
+                #print(res, prio_seats)
+            else:
+                if computed_seats:
+                    dist = comp_dist(passengers[r+1][1], 'r')
+                    x = computed_seats.index(dist)
+                    seat = (dist[1][0], dist[1][1])
+                    if passengers[r+1][1] <= 5:
+                        computed_seats.pop(x)
+                        computed_seats.pop(x-1)
+                    else:
+                        computed_seats.pop(x)
+                        computed_seats.pop(x)
+                    g.center.after(delay, g.create_passenger, ent[1], seat, passengers[r+1])
+                    #print(res)
+                else: 
+                    dist = comp_dist(passengers[r+1][1], 'r')
+                    x = computed_stand.index(dist)
+                    seat = (dist[1][0], dist[1][1])
+                    if passengers[r+1][1] <= 5:
+                        computed_stand.pop(x)
+                        computed_stand.pop(x-1)
+                    else:
+                        computed_stand.pop(x)
+                        computed_stand.pop(x)
+                    g.center.after(delay, g.create_passenger, ent[1], seat, passengers[r+1])
+        except IndexError:
+            pass
+        try:
+            if passengers[r+2][0] == 'p':
+                dist = comp_dist(passengers[r+2][1], 'p')
+                x = computed_pseats.index(dist)
+                seat = (dist[1][0], dist[1][1])
+                if passengers[r+2][1] <= 5:
+                    computed_pseats.pop(x)
+                    computed_pseats.pop(x-1) 
                 else:
-                    seat = (max_dist[1][0], max_dist[1][1])
-                    if seat in stand:
-                        stand.remove(seat)
-                    g.center.after(delay, g.create_passenger, ent[c], seat, r)
-                if c < 3: c+=1 
-                else: c=0
+                    computed_pseats.pop(x)
+                    computed_pseats.pop(x)
+                g.center.after(delay, g.create_passenger, ent[2], seat, passengers[r+2])
+                #print(res, prio_seats)
+            else:
+                if computed_seats:
+                    dist = comp_dist(passengers[r+2][1], 'r')
+                    x = computed_seats.index(dist)
+                    seat = (dist[1][0], dist[1][1])
+                    if passengers[r+2][1] <= 5:
+                        computed_seats.pop(x)
+                        computed_seats.pop(x-1)
+                    else:
+                        computed_seats.pop(x)
+                        computed_seats.pop(x)
+                    g.center.after(delay, g.create_passenger, ent[2], seat, passengers[r+2])
+                    #print(res)
+                else: 
+                    dist = comp_dist(passengers[r+2][1], 'r')
+                    x = computed_stand.index(dist)
+                    seat = (dist[1][0], dist[1][1])
+                    if passengers[r+2][1] <= 5:
+                        computed_stand.pop(x)
+                        computed_stand.pop(x-1)
+                    else:
+                        computed_stand.pop(x)
+                        computed_stand.pop(x)
+                    g.center.after(delay, g.create_passenger, ent[2], seat, passengers[r+2])
+        except IndexError:
+            pass
+        try:
+            if passengers[r+3][0] == 'p':
+                dist = comp_dist(passengers[r+3][1], 'p')
+                x = computed_pseats.index(dist)
+                seat = (dist[1][0], dist[1][1])
+                if passengers[r+3][1] <= 5:
+                    computed_pseats.pop(x)
+                    computed_pseats.pop(x-1) 
+                else:
+                    computed_pseats.pop(x)
+                    computed_pseats.pop(x)
+                g.center.after(delay, g.create_passenger, ent[3], seat, passengers[r+3])
+                #print(res, prio_seats)
+            else:
+                if computed_seats:
+                    dist = comp_dist(passengers[r+3][1], 'r')
+                    x = computed_seats.index(dist)
+                    seat = (dist[1][0], dist[1][1])
+                    if passengers[r+3][1] <= 5:
+                        computed_seats.pop(x)
+                        computed_seats.pop(x-1)
+                    else:
+                        computed_seats.pop(x)
+                        computed_seats.pop(x)
+                    g.center.after(delay, g.create_passenger, ent[3], seat, passengers[r+3])
+                    #print(res)
+                else: 
+                    dist = comp_dist(passengers[r+3][1], 'r')
+                    x = computed_stand.index(dist)
+                    seat = (dist[1][0], dist[1][1])
+                    if passengers[r+3][1] <= 5:
+                        computed_stand.pop(x)
+                        computed_stand.pop(x-1)
+                    else:
+                        computed_stand.pop(x)
+                        computed_stand.pop(x)
+                    g.center.after(delay, g.create_passenger, ent[3], seat, passengers[r+3])
+        except IndexError:
+            pass
+
     #print(res)
         delay += 1000
 
@@ -281,5 +367,49 @@ def comp_seats_dist():
     #print('Computed Stand:', computed_stand)
     #print('Computed Priority Seats:', computed_pseats)
 
-rawfunc()
+def comp_dist(p_dist, type):
+    if type == 'p':
+        if computed_pseats:
+            dist = None
+            for i in range(0, len(computed_pseats), 2):
+
+                if p_dist > 5:
+                    if dist is None:
+                        dist = [computed_pseats[i][0], computed_pseats[i][1]]
+                    elif computed_pseats[i][0] > dist[0]:
+                        dist = [computed_pseats[i][0], computed_pseats[i][1]]
+                else:
+                    if dist is None:
+                        dist = [computed_pseats[i+1][0], computed_pseats[i+1][1]]
+                    elif computed_pseats[i+1][0] < dist[0]:
+                        dist = [computed_pseats[i+1][0], computed_pseats[i+1][1]]
+    else:
+        dist = None
+        if computed_seats:
+            for i in range(0, len(computed_seats), 2):
+                if p_dist > 5:
+                    if dist is None:
+                        dist = [computed_seats[i][0], computed_seats[i][1]]
+                    elif computed_seats[i][0] > dist[0]:
+                        dist = [computed_seats[i][0], computed_seats[i][1]]
+                else:
+                    if dist is None:
+                        dist = [computed_seats[i+1][0], computed_seats[i+1][1]]
+                    elif computed_seats[i+1][0] < dist[0]:
+                        dist = [computed_seats[i+1][0], computed_seats[i+1][1]]
+        elif computed_stand:
+            for i in range(0, len(computed_stand), 2):
+                if p_dist > 5:
+                    if dist is None:
+                        dist = [computed_stand[i][0], computed_stand[i][1]]
+                    elif computed_stand[i][0] > dist[0]:
+                        dist = [computed_stand[i][0], computed_stand[i][1]] 
+                else:
+                    if dist is None:
+                        dist = [computed_stand[i+1][0], computed_stand[i+1][1]]
+                    elif computed_stand[i+1][0] < dist[0]:
+                        dist = [computed_stand[i+1][0], computed_stand[i+1][1]]
+    print(dist)      
+    return dist
+#rawfunc()
 print(res)
