@@ -1,25 +1,41 @@
+# passenger.py
+# Passenger Seating Optimization Algorithm
 
 import copy
 
-#passengers = [3, 5, 6, 4, 9, 9, 5, 9, 8, 5, 4, 1, 8, 5, 6, 6, 8, 10, 10, 9, 4, 5, 5, 7, 8, 2, 10, 8, 10, 4, 4, 1, 6, 1, 7, 2, 10]
+# testing data
 
-passengers = [4, 2, 2, 10, 2, 5, 2, 10, 7, 7, 3, 7, 2, 3, 8, 4, 7, 6, 4, 5, 5, 6, 5, 9, 2, 3, 2, 2, 3, 8, 3, 9, 7, 1, 2, 7, 8, 9, 10, 1, 7, 6, 6, 1, 6, 2, 4, 9, 2, 8, 2, 1, 8, 2, 7, 2, 1, 1, 6, 3, 7, 3, 2, 1, 1, 3, 1, 3, 7, 5, 2, 1, 4, 4, 10, 6, 3, 4, 7, 6, 8, 6, 6, 9, 7, 5, 2, 7, 6, 4, 5, 9, 5, 7, 8, 10, 8, 2, 3, 10]
+# passengers = [10, 9, 3, 4, 5, 6]
 
-#passengers = [10, 9, 3, 4, 5, 6]
+# passengers = [3, 5, 6, 4, 9, 9, 5, 9, 8, 5, 4, 1, 8, 5, 6, 6, 8, 10, 10, 9, 4, 5, 5, 7, 8, 2, 10, 8, 10, 4, 4, 1, 6, 1, 7, 2, 10]
+
+# passengers = [4, 2, 2, 10, 2, 5, 2, 10, 7, 7, 3, 7, 2, 3, 8, 4, 7, 6, 4, 5, 5, 6, 5, 9, 2, 3, 2, 2, 3, 8, 3, 9, 7, 1, 2, 7, 8, 9, 10, 1, 7, 6, 6, 1, 6, 2, 4, 9, 2, 8, 2, 1, 8, 2, 7, 2, 1, 1, 6, 3, 7, 3, 2, 1, 1, 3, 1, 3, 7, 5, 2, 1, 4, 4, 10, 6, 3, 4, 7, 6, 8, 6, 6, 9, 7, 5, 2, 7, 6, 4, 5, 9, 5, 7, 8, 10, 8, 2, 3, 10]
+
+passengers = [8]
+
+
+# passengers = [2, 3, 1, 4, 5, 2, 1, 3, 4, 2, 5, 3]
+# passengers = [9, 8, 10, 7, 6, 9, 10, 8, 7, 9, 10, 8]
+# passengers = []
 
 p = [('p', val) for val in passengers[:6]] # First 6 passengers are always priority passengers
 r = [('r', val) for val in passengers[6:]] # Passengers after the first 6 are regular passengers
 passen = p + r
 
+# Bus Grid Matrix (15x6)
 rows, cols = 15, 6
 row = [0] * cols
 res = [copy.deepcopy(row) for _ in range(rows)]
 
-# entrances passengers will come out from
+# Entrances coordinates where passengers will come in
 ent = [(0,4), (1,4)]
 ent2 = [(8, 4), (9,4)]
+
+# Priority seating coordinates
 prio_seats = [(7, 0), (7,1), (8,0),
               (8,1), (9, 0), (9, 1)]
+
+# Regular seating coordinates (Front and back sections))
 seats = [(2,0), (2, 5), (3,0), (3,5), (4,0), (4,5) ]
 seats_2 = [         
         (5, 0), (5,5), (6, 0), (6, 5),
@@ -30,6 +46,7 @@ seats_2 = [
     
         (14, 0), (14, 1), (14, 2), (14, 4), (14, 5)]
 
+# Standing space coordinates
 stand = [
     (0, 2), (0, 3), (0, 4),
     (1, 2), (1, 3), (1, 4),
@@ -60,6 +77,7 @@ computed_stand = [] # computed Standing seats
 def rawfunc(passengers = passen, res = res): # Simulated for each passenger. Can be calculated 4x in one go for 4 different entrances.
     # passengers is the # on people to be boarded
     # prio is the # of priority passengers in the list of passengers
+    # This exectes the greedy algorithm in the console, iterating through the queue to assign their seats then prints the final grid array
     comp_seats_dist()
     for r in passengers:
         dist = None
@@ -134,10 +152,12 @@ def rawfunc(passengers = passen, res = res): # Simulated for each passenger. Can
                             computed_stand.pop(x)
         except IndexError:
             pass
-    print(res) #Total number of passengers that can be seated in the bus. If the number of passengers exceeds this, then the remaining passengers will not be able to board the bus.
-                    
+    print("[" + ",\n".join(str(row) for row in res) + "]\n") #Total number of passengers that can be seated in the bus. If the number of passengers exceeds this, then the remaining passengers will not be able to board the bus.
+    print(", ".join(str(p[1]) for p in passengers))
 
 def simulate_algo(passengers = passen):
+    #Integrates the Tkinter UI (grid_sim).py
+    #Processes passengers in batches of 4 from each entrance, and visualizes the flow
     import sys
 
     g = sys.modules.get("__main__")
@@ -306,7 +326,7 @@ def simulate_algo(passengers = passen):
                         computed_seats.pop(x)
                     g.center.after(delay, g.create_passenger, ent2[1], seat, passengers[r+3])
                     #print(res)
-                elif computed_stand: 
+                elif computed_stand:
                     dist = comp_dist(passengers[r+3][1], 'r')
                     x = computed_stand.index(dist)
                     seat = (dist[1][0], dist[1][1])
@@ -331,6 +351,7 @@ def get_seat(pos, seatpos):
     return abs(pos[0] - seatpos[0]) + abs(pos[1] - seatpos[1])
 
 def comp_seats_dist():
+    #Pre-compute min and max Manhattan distance between the entrances to avaialble spaces
     for i in seats:
         max_dist = [0, [0,0]]
         min_dist = [99999, [0,0]]
@@ -402,6 +423,8 @@ def comp_seats_dist():
     #print('Computed Priority Seats:', computed_pseats)
 
 def comp_dist(p_dist, type):
+    # Finds optimal seat for a passenger based on the drrop-off distance
+    # Distance > 5 gets further seats, Distance <= gets closer seats
     if type == 'p':
         if computed_pseats:
             dist = None
@@ -442,7 +465,6 @@ def comp_dist(p_dist, type):
                         dist = [computed_stand[i+1][0], computed_stand[i+1][1]]
                     elif computed_stand[i+1][0] < dist[0]:
                         dist = [computed_stand[i+1][0], computed_stand[i+1][1]]
-    print(p_dist)      
     return dist
 
 rawfunc()

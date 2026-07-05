@@ -1,19 +1,24 @@
+#grid_sim.py
+# Bus Passenger GUI Simulation
+
 from tkinter import *
 import passenger as p
 
+#Global variables
 center = None
 cells = {}
 cell_types = {}
 color=''
 
 def build_window():
+    #Intializes the Tkinter window and creates the 15x6 grid
     global center, cells, cell_types
 
     if center is not None:
         return center
 
     center = Tk()
-    center.title("15x6 grid")
+    center.title("Bus Layout 15x6")
     color = ''
     width = 50
     height = 50
@@ -51,6 +56,7 @@ def start_app():
 
 
 def is_valid_move(current_coords, next_coords, dest_coords):
+    # Checks if passenger can move into adjacent cell
     nxt_row, nxt_col = next_coords
     dest_row, dest_col = dest_coords
 
@@ -63,6 +69,7 @@ def is_valid_move(current_coords, next_coords, dest_coords):
     return cell_types.get(next_coords) == 'green'
 
 def move_to_next_cell(ids, curr, dest, final):
+    # Visual movement of passenger from one cell to another
     cells[curr].delete(ids[0])
     cells[curr].delete(ids[1])
     if ids[2][0] == 'p':
@@ -76,6 +83,7 @@ def move_to_next_cell(ids, curr, dest, final):
     center.after(1000, circle_move_to_cell, ids, dest, final)
 
 def circle_move_to_cell(d, curr, dest):
+    # Calculates pathfinding for passenger movement visualization
     curr_row, curr_col = curr
     dest_row, dest_col = dest
     next_step = None
@@ -103,6 +111,7 @@ def circle_move_to_cell(d, curr, dest):
         move_to_next_cell(d, curr, next_step, dest)
 
 def create_passenger(curr, dest, length):
+    # intialize new passenger
     #print(curr, dest)
     if length[0] == 'p': color = 'red' 
     else: color = 'white'
